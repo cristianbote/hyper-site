@@ -1,87 +1,80 @@
+'use client'
+
 import { useState } from 'react'
-import { useRouter } from 'next/router'
+import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import SearchBar from './search-bar'
 import { Arrow, Logo } from '../icons'
 import styles from './header.module.css'
 
 const ActiveLink = ({ href, children }) => {
-  const { pathname } = useRouter()
+  const pathname = usePathname()
 
   return (
-    (<Link
+    <Link
       href={href}
       className={`${styles.link} ${
         pathname.split('/')[1] === href.split('/')[1] ? styles.active : ''
-      }`}>
-
+      }`}
+    >
       {children}
-
-    </Link>)
-  );
+    </Link>
+  )
 }
 
-export default () => {
+export default function Header() {
   const [mobileNavShown, setMobileNavShown] = useState(false)
 
   const toggle = () => setMobileNavShown(!mobileNavShown)
 
-  return <>
-    <header className={styles.header}>
-      <Link href="/" className={styles.logo} aria-label="Hyper logo">
+  return (
+    <>
+      <header className={styles.header}>
+        <Link href="/" className={styles.logo} aria-label="Hyper logo">
+          <Logo width={31} height={23} />
+        </Link>
 
-        <Logo width={31} height={23} />
+        <nav className={styles.desktopNav}>
+          <ActiveLink href="/plugins">Plugins</ActiveLink>
+          <ActiveLink href="/themes">Themes</ActiveLink>
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://github.com/vercel/hyper"
+            className={styles.link}
+          >
+            GitHub
+          </a>
+          <ActiveLink href="/#installation">Download</ActiveLink>
+          <ActiveLink href="/blog">Blog</ActiveLink>
+        </nav>
 
-      </Link>
+        <div className={styles.rightNav}>
+          <SearchBar />
+          <a
+            href="https://vercel.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.vercel}
+          >
+            ▲
+          </a>
+        </div>
 
-      <nav className={styles.desktopNav}>
-        <ActiveLink href="/plugins">Plugins</ActiveLink>
-        <ActiveLink href="/themes">Themes</ActiveLink>
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href="https://github.com/vercel/hyper"
-          className={styles.link}
-        >
-          GitHub
-        </a>
-        <ActiveLink href="/#installation">Download</ActiveLink>
-        <ActiveLink href="/blog">Blog</ActiveLink>
-      </nav>
+        <span className={styles.toggle} onClick={toggle}>
+          <Arrow height={14} width={26} />
+        </span>
+      </header>
 
-      <div className={styles.rightNav}>
+      <nav
+        className={`${styles.mobileNav} ${mobileNavShown ? styles.active : ''}`}
+      >
+        <Link href="/plugins">Plugins</Link>
+        <Link href="/themes">Themes</Link>
+        <Link href="/store/submit">Submit</Link>
+        <Link href="/blog">Blog</Link>
         <SearchBar />
-        <a
-          href="https://vercel.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className={styles.vercel}
-        >
-          ▲
-        </a>
-      </div>
-
-      <span className={styles.toggle} onClick={toggle}>
-        <Arrow height={14} width={26} />
-      </span>
-    </header>
-
-    <nav
-      className={`${styles.mobileNav} ${mobileNavShown ? styles.active : ''}`}
-    >
-      <Link href="/plugins">
-        Plugins
-      </Link>
-      <Link href="/themes">
-        Themes
-      </Link>
-      <Link href="/store/submit">
-        Submit
-      </Link>
-      <Link href="/blog">
-        Blog
-      </Link>
-      <SearchBar />
-    </nav>
-  </>;
+      </nav>
+    </>
+  )
 }
